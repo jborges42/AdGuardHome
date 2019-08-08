@@ -253,3 +253,5 @@ export const ENCRYPTION_SOURCE = {
     PATH: 'path',
     CONTENT: 'content',
 };
+
+export const STATS_INTERVALS = [1, 7, 30, 90];
