@@ -378,7 +378,7 @@ func (s *statsCtx) Close() {
 
 	if s.db != nil {
 		log.Tracef("db.Close...")
-		s.db.Close()
+		_ = s.db.Close()
 		log.Tracef("db.Close")
 	}
 
@@ -392,7 +392,7 @@ func (s *statsCtx) Clear() {
 		s.db = nil
 		_ = tx.Rollback()
 
-		db.Close()
+		_ = db.Close()
 		log.Tracef("db.Close")
 		s.dbOpen()
 	}
@@ -429,6 +429,33 @@ func (s *statsCtx) Update(e Entry) {
 	s.unitLock.Unlock()
 }
 
+/* Algorithm:
+. Prepare array of N units, where N is the value of "limit" configuration setting
+ . Load data for the most recent units from file
+   If a unit with required ID doesn't exist, just add an empty unit
+ . Get data for the current unit
+. Process data from the units and prepare an output map object:
+ * per time unit counters:
+  * DNS-queries/time-unit
+  * blocked/time-unit
+  * safebrowsing-blocked/time-unit
+  * parental-blocked/time-unit
+  If time-unit is an hour, just add values from each unit to an array.
+  If time-unit is a day, aggregate per-hour data into days.
+ * top counters:
+  * queries/domain
+  * queries/blocked-domain
+  * queries/client
+  To get these values we first sum up data for all units into a single map.
+  Then we get the pairs with the highest numbers (the values are sorted in descending order)
+ * total counters:
+  * DNS-queries
+  * blocked
+  * safebrowsing-blocked
+  * safesearch-blocked
+  * parental-blocked
+  These values are just the sum of data for all units.
+*/
 // nolint (gocyclo)
 func (s *statsCtx) GetData(timeUnit TimeUnit) map[string]interface{} {
 	d := map[string]interface{}{}
