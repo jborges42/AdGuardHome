@@ -79,8 +79,8 @@ func handleQueryLogConfig(w http.ResponseWriter, r *http.Request) {
 	returnOK(w)
 }
 
-// RegisterQuerylogHandlers - register handlers
-func RegisterQuerylogHandlers() {
+// RegisterQueryLogHandlers - register handlers
+func RegisterQueryLogHandlers() {
 	httpRegister(http.MethodGet, "/control/querylog", handleQueryLog)
 	httpRegister(http.MethodGet, "/control/querylog_info", handleQueryLogInfo)
 	httpRegister(http.MethodPost, "/control/querylog_config", handleQueryLogConfig)
