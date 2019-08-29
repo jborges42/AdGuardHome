@@ -177,6 +177,7 @@ var config = configuration{
 			BlockingMode:       "nxdomain", // mode how to answer filtered requests
 			BlockedResponseTTL: 10,         // in seconds
 			QueryLogEnabled:    true,
+			QueryLogInterval:   1,
 			Ratelimit:          20,
 			RefuseAny:          true,
 			BootstrapDNS:       defaultBootstrap,

@@ -18,16 +18,12 @@ const (
 	logBufferCap     = 5000            // maximum capacity of logBuffer before it's flushed to disk
 	queryLogFileName = "querylog.json" // .gz added during compression
 	queryLogSize     = 5000            // maximum API response for /querylog
-	queryLogTopSize  = 500             // Keep in memory only top N values
 )
 
 // queryLog is a structure that writes and reads the DNS query log
 type queryLog struct {
 	conf    Config
 	logFile string // path to the log file
-
-	// time interval file rotation interval
-	interval time.Duration
 
 	logBufferLock sync.RWMutex
 	logBuffer     []*logEntry
@@ -49,6 +45,10 @@ func newQueryLog(conf Config) *queryLog {
 
 func (l *queryLog) Close() {
 	l.flushLogBuffer(true)
+}
+
+func (l *queryLog) Configure(conf Config) {
+	l.conf = conf
 }
 
 type logEntry struct {
